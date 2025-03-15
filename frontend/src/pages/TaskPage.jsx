@@ -2,18 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useTaskStore } from '../store/useTaskStore';
 
 export default function TaskPage() {
-  // const [tasks, setTasks] = useState([
-  //   { id: 1, title: 'Task 1', description: 'Description 1', status: 'To Do', priority: true },
-  //   { id: 2, title: 'Task 2', description: 'Description 2', status: 'In Progress', priority: true },
-  //   { id: 3, title: 'Task 3', description: 'Description 3', status: 'Done', priority: false },
-  //   { id: 4, title: 'Task 4', description: 'Description 4', status: 'Done', priority: false },
-  //   { id: 5, title: 'Task 5', description: 'Description 5', status: 'Done', priority: false },
-  // ]);
+
   const { 
     tasks,
     getTasks,
     addTask,
-    deleteTask
+    deleteTask,
+    updateTask,
    } = useTaskStore();
 
 
@@ -21,11 +16,15 @@ export default function TaskPage() {
     getTasks();
   }, [getTasks]);
 
+  useEffect(() => {
+    setPriorityTasks(tasks.filter(task => task.priority).map(task => task._id));
+  }, [tasks]);
 
 
   const [newTask, setNewTask] = useState({ title: '', description: '', status: 'To Do' });
   const [priorityTasks, setPriorityTasks] = useState([]);
-  
+  const [editingTasks, setEditingTasks] = useState({});
+
   // Setting initially the priority tasks
   useEffect(() => {
     setPriorityTasks(tasks.filter(task => task.priority).map(task => task._id));
@@ -57,16 +56,42 @@ export default function TaskPage() {
     }
   };
 
-  const updateTask = (_id, key, value) => {
-    setTasks(tasks.map(task => (task._id === _id ? { ...task, [key]: value } : task)));
+  const handleUpdateTask = async (taskId, updates) => {
+    try {
+      await updateTask(taskId, updates);
+    } catch (error) {
+      console.error('Error updating task', error);
+    }
+  }
+
+  const handleChangeDescription = (taskId, newValue) => {
+    setEditingTasks(prev => ({
+      ...prev,
+      [taskId]: { text: newValue }
+    }));
   };
 
-  const handlePriorityChange = (taskId) => {
-    if (priorityTasks.includes(taskId)) {
-      setPriorityTasks(priorityTasks.filter(_id => _id !== taskId));
-    } else {
-      setPriorityTasks([...priorityTasks, taskId]);
+  // const handleUpdateDescription = async (taskId, newDescription) => {
+  //   try {
+  //       updates = { description: newDescription };
+  //       await handleUpdateTask(taskId, updates);
+  //   } catch (error) {
+  //       console.error('Error updating description:', error);
+  //   }
+  // };
+  const handleSaveDescription = async (taskId) => {
+    const updatedText = editingTasks[taskId]?.text.trim();
+    if (!updatedText || updatedText === tasks.find(t => t._id === taskId)?.description) {
+      return; // ✅ 如果没有变化，不发送请求
     }
+  
+    await handleUpdateTask(taskId, { description: updatedText });
+  
+    // 退出编辑模式（不需要重置 text，否则用户输入的内容会闪烁）
+    setEditingTasks(prev => ({
+      ...prev,
+      [taskId]: { text: updatedText }
+    }));
   };
 
   return (
@@ -147,11 +172,17 @@ export default function TaskPage() {
                 type="checkbox"
                 className="checkbox checkbox-primary mr-2 checked:bg-[url('https://s3.amazonaws.com/pix.iemoji.com/images/emoji/apple/ios-12/256/exclamation-mark.png')] bg-center bg-no-repeat bg-cover"
                 checked={priorityTasks.includes(task._id)}
-                onChange={() => handlePriorityChange(task._id)}
+                onChange={(e) => handleUpdateTask(task._id, { 'priority': e.target.checked })}
               />
             </label>
             <h2 className="text-lg font-bold ml-6 text-center">{task.title}</h2>
-            <p className="ml-6 mb-2">{task.description}</p>
+            <textarea
+              className="textarea textarea-bordered w-full text-sm resize-none"
+              value={editingTasks[task._id]?.text || task.description} // 默认显示数据库数据
+              onChange={(e) => handleChangeDescription(task._id, e.target.value)} // ✅ 只更新当前 `task._id`
+              onBlur={() => handleSaveDescription(task._id)} // ✅ 失去焦点自动保存
+              onKeyDown={(e) => e.key === "Enter" && handleSaveDescription(task._id)} // ✅ 回车键也自动保存
+            />
             <select
               className={`
                 select select-bordered w-full text-center
@@ -160,7 +191,7 @@ export default function TaskPage() {
                 ${task.status === 'Done' ? 'bg-green-500 text-white' : ''}
               `}
               value={task.status}
-              onChange={(e) => updateTask(task._id, 'status', e.target.value)}
+              onChange={(e) => handleUpdateTask(task._id, {'status': e.target.value})}
             >
               <option value="To Do">To Do</option>
               <option value="In Progress">In Progress</option>

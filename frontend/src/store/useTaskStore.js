@@ -7,7 +7,7 @@ import { useAuthStore } from './useAuthStore';
     tasks: [],
     isTasksLoading: false,
     
-    getTasks: async (userId) => {
+    getTasks: async () => {
         set({ isTasksLoading: true});
         console.log('hey inside getTASKS')
         try {
@@ -39,6 +39,15 @@ import { useAuthStore } from './useAuthStore';
             set({ tasks: tasks.filter(task => task._id !== _id) });
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to delete task");
+        }
+    },
+    updateTask: async (_id, updates) => {
+        const { tasks } = get();
+        try {
+            await axiosInstance.patch(`/task/update-task/${_id}`, updates);
+            set({ tasks: tasks.map(task => task._id === _id ? {...task, ...updates} : task) });
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to update task");
         }
     }
     
