@@ -14,7 +14,7 @@ const taskSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        taskStatus: {
+        status: {
             type: String,
             required: true,
         },
@@ -25,5 +25,5 @@ const taskSchema = new mongoose.Schema(
     },
     { timestamps: true}
 );
-const Task = mongoose.model("Task", messageSchema);
+const Task = mongoose.model("Task", taskSchema);
 export default Task;

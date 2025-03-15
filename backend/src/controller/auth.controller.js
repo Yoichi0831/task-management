@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs"
 import { generateToken } from "../lib/utils.js";
+
 export const signup = async (req, res)=>{
     console.log("req.body is", req.body);
     const { fullName ="", email="", password=""} = req.body
@@ -76,3 +77,12 @@ export const logout = (req, res)=>{
         res.status(500).json({message: "Internal Server Error"})
     }
 };   
+
+export const checkAuth = async (req, res)=>{
+    try {
+        res.status(200).json(req.user);
+    } catch (error) {
+        console.log("Error in checkAuth controller: ", error);
+        res.status(500).json({message: "Internal server error"});
+    }
+};
