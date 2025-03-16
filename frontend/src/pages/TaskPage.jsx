@@ -137,25 +137,39 @@ export default function TaskPage() {
       </form>
 
 
-      {/* Priority Tasks List */}
       {priorityTasks.length > 0 && (
-        <div className="mt-8 mb-4">
-          <h2 className="text-xl font-bold mb-4">Priority Tasks</h2>
-          <ul className="space-y-2">
-            {priorityTasks.map(taskId => {
-              const task = tasks.find(t => t._id === taskId);
-              if (!task) return null;
-              return (
-                <li key={taskId} className="p-4 border rounded-lg text-center mb-4">
-                  <h3 className="text-lg font-bold">{task.title}</h3>
+      <div className="mt-8 mb-4">
+        <h2 className="text-2xl font-bold mb-4">Priority Tasks</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {priorityTasks.map(taskId => {
+            const task = tasks.find(t => t._id === taskId);
+            if (!task) return null;
+            return (
+              <div key={taskId} className="card bg-base-100 shadow-xl bd-2 border-primary">
+                <div className="card-body">
+                  <h2 className="card-title">{task.title}</h2>
                   <p>{task.description}</p>
-                  <p>{task.status}</p>
-                </li>
-              );
-            })}
-          </ul>
+                  <div className="card-actions justify-end">
+                    <span className={`badge ${
+                      task.status === 'Done'
+                        ? 'badge-success'
+                        : task.status === 'In Progress'
+                        ? 'badge-warning'
+                        : task.status === 'To Do'
+                        ? 'badge-error'
+                        : 'badge-primary'
+                    }`}>
+                      {task.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div>
+    )}
+
 
       {/* Task List */}
       <div className="flex flex-wrap gap-4">
@@ -180,9 +194,10 @@ export default function TaskPage() {
                 onChange={(e) => handleUpdateTask(task._id, { 'priority': e.target.checked })}
               />
             </label>
-            <h2 className="text-lg font-bold ml-6 text-center">{task.title}</h2>
+            <h2 className="text-lg font-bold ml-6 mb-2 text-center">{task.title}</h2>
+            <label className="text-sm mt-2 mb-2">Task:</label>
             <textarea
-              className="textarea textarea-bordered w-full text-sm resize-none"
+              className="textarea textarea-bordered w-full text-sm resize-none mb-2"
               value={editingTasks[task._id]?.text || task.description}
               onChange={(e) => handleChangeDescription(task._id, e.target.value)}
               onBlur={() => handleSaveDescription(task._id)}
