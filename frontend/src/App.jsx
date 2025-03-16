@@ -25,7 +25,7 @@ function App() {
     <div>
       <Navbar />
       <Routes>
-        <Route path="/" element = {authUser? <TaskPage /> : <Navigate to='/login'/>} />
+        <Route path="/" element = {!authUser? <Navigate to='/login'/>:<TaskPage />} />
         <Route path='/signup' element = { !authUser? <Signup/> : <Navigate to='/'/>} />
         <Route path='/login' element = { !authUser? <Login/> : <Navigate to='/'/>} />
       </Routes>
