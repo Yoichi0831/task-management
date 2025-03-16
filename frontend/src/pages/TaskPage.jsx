@@ -4,7 +4,7 @@ import { useTaskStore } from '../store/useTaskStore';
 export default function TaskPage() {
 
   const { 
-    tasks,
+    tasks=[],
     getTasks,
     addTask,
     deleteTask,
@@ -140,6 +140,7 @@ export default function TaskPage() {
           <ul className="space-y-2">
             {priorityTasks.map(taskId => {
               const task = tasks.find(t => t._id === taskId);
+              if (!task) return null;
               return (
                 <li key={taskId} className="p-4 border rounded-lg text-center mb-4">
                   <h3 className="text-lg font-bold">{task.title}</h3>
@@ -178,10 +179,10 @@ export default function TaskPage() {
             <h2 className="text-lg font-bold ml-6 text-center">{task.title}</h2>
             <textarea
               className="textarea textarea-bordered w-full text-sm resize-none"
-              value={editingTasks[task._id]?.text || task.description} // 默认显示数据库数据
-              onChange={(e) => handleChangeDescription(task._id, e.target.value)} // ✅ 只更新当前 `task._id`
-              onBlur={() => handleSaveDescription(task._id)} // ✅ 失去焦点自动保存
-              onKeyDown={(e) => e.key === "Enter" && handleSaveDescription(task._id)} // ✅ 回车键也自动保存
+              value={editingTasks[task._id]?.text || task.description}
+              onChange={(e) => handleChangeDescription(task._id, e.target.value)}
+              onBlur={() => handleSaveDescription(task._id)}
+              onKeyDown={(e) => e.key === "Enter" && handleSaveDescription(task._id)}
             />
             <select
               className={`
