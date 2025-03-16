@@ -1,9 +1,9 @@
 import React from "react";
-import { useAuthStore } from "../store/useAuthStore"; // 假设你有 Zustand 存储用户状态
+import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 
 export default function Nav() {
-  const { user, logout } = useAuthStore();
+  const { authUser, logout } = useAuthStore();
   const navigate = useNavigate();
 
   return (
@@ -15,23 +15,23 @@ export default function Nav() {
       <div className="flex items-center gap-4">
         {/* Avatar */}
         <img
-          src={user?.avatar || "https://via.placeholder.com/40"}
+          src={!authUser? "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI=" : "https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745"}
           alt="User Avatar"
-          className="w-10 h-10 rounded-full border border-white object-cover"
+          className="w-12 h-12 rounded-full border border-white object-cover"
         />
 
         {/* Login/Logout Button */}
         <button
           onClick={() => {
-            if (user) {
+            if (authUser) {
               logout();
             } else {
               navigate("/login");
             }
           }}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 transition"
+          className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 transition"
         >
-          {user ? "🚪" : "🔑"}
+          {authUser ? "Logout" : "Login"}
         </button>
       </div>
     </nav>

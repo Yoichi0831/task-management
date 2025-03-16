@@ -6,7 +6,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import { useAuthStore } from './store/useAuthStore';
 import { Loader } from 'lucide-react';
-
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -31,6 +31,7 @@ function App() {
         <Route path='/signup' element = { !authUser? <Signup/> : <Navigate to='/'/>} />
         <Route path='/login' element = { !authUser? <Login/> : <Navigate to='/'/>} />
       </Routes>
+      <Toaster position="top-left" />
     </div>
 
   );

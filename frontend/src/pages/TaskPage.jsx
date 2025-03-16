@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTaskStore } from '../store/useTaskStore';
+import toast from 'react-hot-toast';
 
 export default function TaskPage() {
 
@@ -51,6 +52,8 @@ export default function TaskPage() {
   const handleDeleteTask = async (taskId) => {
     try {
       await deleteTask(taskId);
+      toast.success('Task deleted successfully');
+      console.log('deleted')
     } catch (error) {
       console.error('Error deleting task', error);
     }
@@ -82,16 +85,17 @@ export default function TaskPage() {
   const handleSaveDescription = async (taskId) => {
     const updatedText = editingTasks[taskId]?.text.trim();
     if (!updatedText || updatedText === tasks.find(t => t._id === taskId)?.description) {
-      return; // ✅ 如果没有变化，不发送请求
+      return;
     }
   
     await handleUpdateTask(taskId, { description: updatedText });
   
-    // 退出编辑模式（不需要重置 text，否则用户输入的内容会闪烁）
     setEditingTasks(prev => ({
       ...prev,
       [taskId]: { text: updatedText }
     }));
+    toast.success('Description updated successfully');
+    console.log('updated')
   };
 
   return (
@@ -103,13 +107,13 @@ export default function TaskPage() {
         <div className="mb-4 p-4 border rounded-lg w-full md:w-1/4">
           <input
             type="text"
-            placeholder="Title"
+            placeholder="Task Title"
             className="input input-bordered w-full mb-2"
             value={newTask.title}
             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
           />
           <textarea
-            placeholder="Description"
+            placeholder="Task Description"
             className="textarea textarea-bordered w-full mb-2"
             value={newTask.description}
             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
