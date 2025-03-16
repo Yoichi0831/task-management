@@ -9,7 +9,6 @@ import { useAuthStore } from './useAuthStore';
     
     getTasks: async () => {
         set({ isTasksLoading: true});
-        console.log('hey inside getTASKS')
         try {
             const res = await axiosInstance.get(`/task/tasks`);
             set({ tasks: res.data});
@@ -31,8 +30,6 @@ import { useAuthStore } from './useAuthStore';
         }
     },
     deleteTask: async (_id) => {
-        console.log('deleting id is:', _id)
-        //console.log('tasks are:', get().tasks)
         const { tasks } = get();
         try {
             await axiosInstance.delete(`/task/delete-task/${_id}`);

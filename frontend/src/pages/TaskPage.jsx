@@ -34,14 +34,12 @@ export default function TaskPage() {
   const handleAddTask = async (e) => {
     e.preventDefault();
     try {
-      console.log('inside handleAddTask')
       await addTask({ 
           title: newTask.title.trim(), 
           description: newTask.description.trim(),
           status: newTask.status,
           priority: false,
       });
-      console.log('now clear form')
       // Clear form
       setNewTask({ title: '', description: '', status: 'To Do' });
     } catch (error) {
@@ -53,9 +51,9 @@ export default function TaskPage() {
     try {
       await deleteTask(taskId);
       toast.success('Task deleted successfully');
-      console.log('deleted')
     } catch (error) {
       console.error('Error deleting task', error);
+      toast.error('Error deleting task');
     }
   };
 
@@ -64,6 +62,7 @@ export default function TaskPage() {
       await updateTask(taskId, updates);
     } catch (error) {
       console.error('Error updating task', error);
+      toast.error('Error updating task');
     }
   }
 
@@ -74,14 +73,6 @@ export default function TaskPage() {
     }));
   };
 
-  // const handleUpdateDescription = async (taskId, newDescription) => {
-  //   try {
-  //       updates = { description: newDescription };
-  //       await handleUpdateTask(taskId, updates);
-  //   } catch (error) {
-  //       console.error('Error updating description:', error);
-  //   }
-  // };
   const handleSaveDescription = async (taskId) => {
     const updatedText = editingTasks[taskId]?.text.trim();
     if (!updatedText || updatedText === tasks.find(t => t._id === taskId)?.description) {
@@ -95,7 +86,6 @@ export default function TaskPage() {
       [taskId]: { text: updatedText }
     }));
     toast.success('Description updated successfully');
-    console.log('updated')
   };
 
   return (

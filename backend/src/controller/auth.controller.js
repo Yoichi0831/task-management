@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs"
 import { generateToken } from "../lib/utils.js";
 
 export const signup = async (req, res)=>{
-    console.log("req.body is", req.body);
     const { fullName ="", email="", password=""} = req.body
     try {
         if (!fullName || !email || !password) {
@@ -36,7 +35,6 @@ export const signup = async (req, res)=>{
             });
         }
         else {
-            console.log("Error in signup controller", error.message);
             res.status(500).json({message: "Internal Server Error"})
         }
 
@@ -64,7 +62,6 @@ export const login = async (req, res)=>{
             profilePic: user.profilePic
         })
     } catch (error) {
-        console.log("Error in login controller", error.message)
         res.status(500).json({message: "Internal Server Error"})
     }
 }; 
@@ -82,7 +79,6 @@ export const checkAuth = async (req, res)=>{
     try {
         res.status(200).json(req.user);
     } catch (error) {
-        console.log("Error in checkAuth controller: ", error);
         res.status(500).json({message: "Internal server error"});
     }
 };
