@@ -5,13 +5,12 @@ import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
     authUser: null,
-    isCheckingAuth: false,
+    isCheckingAuth: true,
 
     checkAuth: async () => {
         try {
             const res = await axiosInstance.get('/auth/check');
-            set({ authUser: res.data });
-            console.log('authUser', res.data);
+            set({ authUser: res.data, isCheckingAuth: false });
         } catch (error) {
             set({ authUser: null});
         }
